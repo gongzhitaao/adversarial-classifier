@@ -97,7 +97,7 @@ EPS = 0.01
 
 if False:
     print('\nLoading adversarial images')
-    db = np.load('data/table_1_cifar10_{0:.4f}.npy'.format(EPS))
+    db = np.load('data/table_1_cifar10_{0:.4f}.npz'.format(EPS))
     X_train_adv = db['X_train_adv']
     X_test_adv = db['X_test_adv']
 else:
@@ -130,7 +130,7 @@ else:
 
     print('\nSaving adversarial images')
     os.makedirs('data/', exist_ok=True)
-    np.savez('data/table_1_cifar10_{0:.4f}.npy',
+    np.savez('data/table_1_cifar10_{0:.4f}.npz'.format(EPS),
              X_train_adv=X_train_adv, X_test_adv=X_test_adv)
 
 
