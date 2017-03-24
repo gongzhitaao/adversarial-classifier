@@ -41,7 +41,7 @@ sess = tf.InteractiveSession()
 K.set_session(sess)
 
 
-if True:
+if False:
     print('\nLoading model0')
     model0 = load_model('model/table_2_model0.h5')
 else:
@@ -142,7 +142,7 @@ y0_test = np.zeros((y_test.shape[0], 1))
 y1_test = np.ones((y_test.shape[0], 1))
 
 
-if True:
+if False:
     print('\nLoading model1')
     model1 = load_model('model/table_2_model1.h5')
 else:
