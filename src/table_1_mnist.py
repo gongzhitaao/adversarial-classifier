@@ -125,6 +125,50 @@ score = model0.evaluate(X_test_adv, y_test)
 print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
 
 
+print('\nPlotting random adversarial data')
+
+print('\nMaking predictions')
+z0 = np.argmax(y_test, axis=1)
+y1 = model0.predict(X_test)
+z1 = np.argmax(y1, axis=1)
+y2 = model0.predict(X_test_adv)
+z2 = np.argmax(y2, axis=1)
+
+print('\nSelecting figures')
+X_tmp = np.empty((2, nb_classes, img_rows, img_cols))
+y_proba = np.empty((2, nb_classes, nb_classes))
+for i in range(10):
+    print('Target {0}'.format(i))
+    ind, = np.where(np.all([z0==i, z1==i, z2!=i], axis=0))
+    cur = np.random.choice(ind)
+    X_tmp[0][i] = np.squeeze(X_test[cur])
+    X_tmp[1][i] = np.squeeze(X_test_adv[cur])
+    y_proba[0][i] = y1[cur]
+    y_proba[1][i] = y2[cur]
+
+
+print('\nPlotting results')
+fig = plt.figure(figsize=(10, 3))
+gs = gridspec.GridSpec(2, 10, wspace=0.1, hspace=0.1)
+
+label = np.argmax(y_proba, axis=2)
+proba = np.max(y_proba, axis=2)
+for i in range(10):
+    for j in range(2):
+        ax = fig.add_subplot(gs[j, i])
+        ax.imshow(X_tmp[j][i], interpolation='none')
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_xlabel('{0} ({1:.2f})'.format(label[j][i],
+                                             proba[j][i]),
+                      fontsize=12)
+
+print('\nSaving figure')
+gs.tight_layout(fig)
+os.makedirs('img', exist_ok=True)
+plt.savefig('img/table_1_mnist.pdf')
+
+
 print('\nPreparing clean/adversarial mixed dataset')
 X_all_train = np.vstack([X_train, X_train_adv])
 y_all_train = np.vstack([np.zeros([X_train.shape[0], 1]),
