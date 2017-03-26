@@ -18,18 +18,18 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 from attacks.fgsm import fgsm
-from attacks.jsma import jsma
 
 
 
-def decompose(v, i):
-    """Decompose v so that v = a*i+b*j where i is orthogonal to j."""
+def random_orthogonal(i):
+    """Return a random vector orthogonal to i."""
+    v = np.random.random(i.shape)
     i /= np.linalg.norm(i)
     a = np.dot(v, i) / np.dot(i, i)
     j = v - a*i
     b = np.linalg.norm(j)
     j /= b
-    return (a, i), (b, j)
+    return j, (a, i)
 
 
 img_rows = 28
@@ -59,7 +59,7 @@ sess = tf.InteractiveSession()
 K.set_session(sess)
 
 
-if True:
+if False:
     print('\nLoading model0')
     model0 = load_model('model/figure_2_model0.h5')
 else:
@@ -91,8 +91,7 @@ else:
 
 x = tf.placeholder(tf.float32, (None, img_rows, img_cols, img_chan))
 y = tf.placeholder(tf.int32, (None, ))
-x_adv_fgsm = fgsm(model0, x, eps=0.25, nb_epoch=1)
-x_adv_jsma = jsma(model0, x, y, nb_epoch=0.2)
+x_adv = fgsm(model0, x, eps=0.25, nb_epoch=1)
 
 
 print('\nTesting against clean data')
@@ -101,60 +100,33 @@ print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
 
 
 if False:
-    print('\nLoading FGSM/JSMA adversarial datasets')
-    db = np.load('data/figure_2.npz')
-    X_adv_fgsm, X_adv_jsma = db['X_adv_fgsm'], db['X_adv_jsma']
+    print('\nLoading adversarial datasets')
+    X_adv = np.load('data/figure_2.npy')
 else:
-    print('\nGenerating adversarial via FGSM')
+    print('\nGenerating adversarial')
     batch_size = 64
-    X_adv_fgsm = np.empty(X_test.shape)
+    X_adv = np.empty(X_test.shape)
     nb_sample = X_test.shape[0]
     nb_batch = int(np.ceil(nb_sample/batch_size))
     for batch in range(nb_batch):
         print('batch {0}/{1}'.format(batch+1, nb_batch), end='\r')
         start = batch * batch_size
         end = min(nb_sample, start+batch_size)
-        tmp = sess.run(x_adv_fgsm, feed_dict={x: X_test[start:end],
-                                              K.learning_phase(): 0})
-        X_adv_fgsm[start:end] = tmp
-
-    print('\nGenerating adversarial via JSMA')
-    batch_size = 64
-    X_adv_jsma = np.empty(X_test.shape)
-    z_test = np.argmax(y_test, axis=1)
-    targets = np.arange(10)
-    for i in range(10):
-        print('\nModifying digit {0}'.format(i))
-        ind, = np.where(z_test==i)
-        X_i = X_test[ind]
-        nb_sample = X_i.shape[0]
-        t_i = np.random.choice(targets[targets!=i], nb_sample)
-        nb_batch = int(np.ceil(nb_sample/batch_size))
-        for batch in range(nb_batch):
-            print('batch {0}/{1}'.format(batch+1, nb_batch), end='\r')
-            start = batch * batch_size
-            end = min(nb_sample, start+batch_size)
-            tmp = sess.run(x_adv_jsma, feed_dict={
-                x: X_i[start:end], y: t_i[start:end],
-                K.learning_phase(): 0})
-            X_adv_jsma[ind[start:end]] = tmp
+        tmp = sess.run(x_adv, feed_dict={x: X_test[start:end],
+                                         K.learning_phase(): 0})
+        X_adv[start:end] = tmp
 
     print('\nSaving adversarials')
     os.makedirs('data', exist_ok=True)
-    np.savez('data/figure_2.npz', X_adv_fgsm=X_adv_fgsm,
-             X_adv_jsma=X_adv_jsma)
+    np.save('data/figure_2.npy', X_adv)
 
 
-print('\nTesting against FGSM adversarial data')
-score = model0.evaluate(X_adv_fgsm, y_test)
-print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
-
-print('\nTesting against JSMA adversarial data')
-score = model0.evaluate(X_adv_jsma, y_test)
+print('\nTesting against adversarial data')
+score = model0.evaluate(X_adv, y_test)
 print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
 
 
-if True:
+if False:
     print('\nLoading model1')
     model1 = load_model('model/figure_2_model1.h5')
 else:
@@ -176,7 +148,7 @@ else:
     model1.compile(loss='categorical_crossentropy',
                    optimizer='adam', metrics=['accuracy'])
 
-    x_adv_tmp = fgsm(model1, x, eps=0.25, nb_epoch=1)
+    x_adv_tmp = fgsm(model1, x, eps=0.3, nb_epoch=1)
 
     print('\nDummy testing')
     model1.evaluate(X_test[:10], y_test[:10], verbose=0)
@@ -216,54 +188,40 @@ else:
     model1.save('model/figure_2_model1.h5')
 
 
-print('\nTesting against FGSM adversarial')
-score = model1.evaluate(X_adv_fgsm, y_test)
+print('\nTesting against adversarial')
+score = model1.evaluate(X_adv, y_test)
 print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
-
-print('\nTesting against JSMA adversarial')
-score = model1.evaluate(X_adv_jsma, y_test)
-print('\nloss: {0:.4f} acc: {1:.4f}'.format(score[0], score[1]))
-
 
 
 print('\nPreparing predictions')
 y0_0 = model0.predict(X_test)
-y0_1_fgsm = model0.predict(X_adv_fgsm)
-y0_1_jsma = model0.predict(X_adv_jsma)
+y0_1 = model0.predict(X_adv)
 
 y1_0 = model1.predict(X_test)
-y1_1_fgsm = model1.predict(X_adv_fgsm)
-y1_1_jsma = model1.predict(X_adv_jsma)
+y1_1 = model1.predict(X_adv)
 
 z_test = np.argmax(y_test, axis=1)
 
 z0_0 = np.argmax(y0_0, axis=1)
-z0_1_fgsm = np.argmax(y0_1_fgsm, axis=1)
-z0_1_jsma = np.argmax(y0_1_jsma, axis=1)
+z0_1 = np.argmax(y0_1, axis=1)
 
 z1_0 = np.argmax(y1_0, axis=1)
-z1_1_fgsm = np.argmax(y1_1_fgsm, axis=1)
-z1_1_jsma = np.argmax(y1_1_jsma, axis=1)
+z1_1 = np.argmax(y1_1, axis=1)
 
 p0_0 = np.max(y0_0, axis=1)
-p0_1_fgsm = np.max(y0_1_fgsm, axis=1)
-p0_1_jsma = np.max(y0_1_jsma, axis=1)
+p0_1 = np.max(y0_1, axis=1)
 
 p1_0 = np.max(y1_0, axis=1)
-p1_1_fgsm = np.max(y1_1_fgsm, axis=1)
-p1_1_jsma = np.max(y1_1_jsma, axis=1)
+p1_1 = np.max(y1_1, axis=1)
 
 img_rows = 41
 img_cols = 41
 img_chan = 4
 
-p_filter = np.all([p0_0>0.5,
-                   p0_1_fgsm>0.5, p0_1_jsma>0.5,
-                   p1_1_fgsm>0.5, p1_1_jsma>0.5],
-                  axis=0)
+p_filter = np.all([p0_0>0.5, p0_1>0.5, p1_1>0.5], axis=0)
 
 print('\nGenerating figure')
-fig = plt.figure(figsize=(40, 5))
+fig = plt.figure(figsize=(8, 1))
 gs = gridspec.GridSpec(1, 10, wspace=0.15)
 
 for label in range(10):
@@ -279,24 +237,24 @@ for label in range(10):
     img = np.empty((img_rows, img_cols, img_chan))
     ind, = np.where(np.all([p_filter,
                             z_test==label, z0_0==label,
-                            z0_1_fgsm!=label, z0_1_jsma!=label,
-                            z1_1_fgsm==label, z1_1_jsma!=label],
+                            z0_1!=label, z1_1==label],
                            axis=0))
 
     cur = np.random.choice(ind)
     X_i = np.squeeze(X_test[cur])
-    X_fgsm_i = np.squeeze(X_adv_fgsm[cur])
-    X_jsma_i = np.squeeze(X_adv_jsma[cur])
+    X_adv_i = np.squeeze(X_adv[cur])
 
-    i = X_fgsm_i.flatten() - X_i.flatten()
-    v = X_jsma_i.flatten() - X_i.flatten()
-    (a, i), (b, j) = decompose(v, i)
+    i = X_adv_i.flatten() - X_i.flatten()
+    j, (a, i) = random_orthogonal(i)
 
-    D = np.amax([1.5 * np.amax(np.absolute([a, b])),
-                 0.5 / np.linalg.norm(np.absolute(i), ord=np.inf)])
+    D = np.amax([1.5 * np.absolute(a),
+                 0.5 / np.linalg.norm(i, ord=np.inf)])
 
     eps_i = np.linspace(-D, D, img_cols)
     eps_j = np.linspace(D, -D, img_rows)
+
+    cnt = 0
+    tmpr, tmpc = 0, 0
 
     for r, ej in enumerate(eps_j):
         for c, ei in enumerate(eps_i):
@@ -320,6 +278,9 @@ for label in range(10):
             else:
                 # incorrect prediction in both cases
                 color = [0.1, 0.1, 0.1, 0.1]
+                cnt += 1
+                if np.random.random() < 1./cnt:
+                    tmpr, tmpc = r, c
             img[r, c] = color
 
     # the original datum
@@ -327,16 +288,14 @@ for label in range(10):
     c = img_rows // 2
     img[r, c] = [0, 0, 0, 1]
 
-    # fgsm datum
+    # adversarial datum
     r = img_rows // 2
-    c = int((np.linalg.norm(X_fgsm_i-X_i)-eps_i[0]) / (2*D) *
-            img_cols)
+    c = int((np.linalg.norm(X_adv_i-X_i)-eps_i[0]) / (2*D) * img_cols)
     img[r, c] = [1.0, 0.65, 0, 1]
 
-    # jsma datum
-    r = int((a-eps_i[0])/(2*D) * img_cols)
-    c = int((b-eps_j[-1])/(2*D) * img_rows)
-    img[r, c] = [0, 0, 1, 0.6]
+    # random adversarial datum
+    img[tmpr, tmpc] = [0, 0, 1, 1]
+
 
     ax.imshow(img, interpolation='none')
     ax.set_xticks([])
@@ -346,11 +305,14 @@ for label in range(10):
     ax0.set_xticks([])
     ax0.set_yticks([])
 
-    ax1.imshow(X_fgsm_i, cmap='gray', interpolation='none')
+    ax1.imshow(X_adv_i, cmap='gray', interpolation='none')
     ax1.set_xticks([])
     ax1.set_yticks([])
 
-    ax2.imshow(X_jsma_i, cmap='gray', interpolation='none')
+    X_tmp = np.clip(X_i.flatten()+eps_j[tmpr]*j+eps_i[tmpc]*i,
+                    0, 1)
+    X_tmp = np.reshape(X_tmp, (28, 28))
+    ax2.imshow(X_tmp, cmap='gray', interpolation='none')
     ax2.set_xticks([])
     ax2.set_yticks([])
 
