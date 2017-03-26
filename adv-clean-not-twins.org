@@ -21,9 +21,10 @@
 
 \icmlcorrespondingauthor{Zhitao Gong}{gong@auburn.edu}
 
-% You may provide any keywords that you
-% find helpful for describing your paper; these are used to populate
-% the "keywords" metadata in the PDF but will not be shown in the document
+% You may provide any keywords that you find helpful for describing
+% your paper; these are used to populate the "keywords" metadata in
+% the PDF but will not be shown in the document
+
 \icmlkeywords{adversarial, deep neural network}
 
 \vskip 0.3in
@@ -276,19 +277,39 @@ ref:eq:llcm-y.
 And it was extended to more general case where \(y^{adv}\) could be
 any desired target class cite:kurakin2016-adversarial-1.
 
+#+BEGIN_EXPORT latex
+\begin{table*}[htbp]
+  \caption{\label{tbl:accuracy-summary}
+    Accuracy on adversarial samples generated with FGSM/TGSM.}
+  \centering
+  \begin{tabular}{lcrrcrrrr}
+    \toprule
+    & \phantom{a} & \multicolumn{2}{c}{\(f_1\)} & \phantom{a} & \multicolumn{4}{c}{\(f_2\)} \\
+    \cmidrule{3-4} \cmidrule{6-9}
+    Dataset && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) & \(\{X_{test}\}^{adv(f_2)}\) & \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) \\
+    \midrule
+    MNIST && 0.9914 & 0.0213 && 1.00 & 1.00 & 0.00 & 1.00\\
+    CIFAR10 && 0.8279 & 0.1500 && 0.99 & 1.00 & 0.01 & 1.00\\
+    SVHN && 0.9378 & 0.2453 && 1.00 & 1.00 & 0.00 & 1.00\\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+#+END_EXPORT
+
 # The following table belongs to the "Efficiency and Robustness of the
 # Classifier" section, place here only for typesetting.
 
-#+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
-#+NAME: tbl:accuracy-summary
-#+ATTR_LaTeX: :booktabs true :align l|rr|rrrr :float multicolumn
-|         |      \(f_1\) |                         |              |                         |                     \(f_2\) |                                        |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| Dataset | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(\{X_{test}\}^{adv(f_2)}\) | \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| MNIST   |       0.9914 |                  0.0213 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
-| CIFAR10 |       0.8279 |                  0.1500 |         0.99 |                    1.00 |                        0.01 |                                   1.00 |
-| SVHN    |       0.9378 |                  0.2453 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
+# #+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
+# #+NAME: tbl:accuracy-summary
+# #+ATTR_LaTeX: :booktabs true :align l|rr|rrrr :float multicolumn
+# |         |      \(f_1\) |                         |              |                         |                     \(f_2\) |                                        |
+# |---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
+# | Dataset | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(\{X_{test}\}^{adv(f_2)}\) | \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) |
+# |---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
+# | MNIST   |       0.9914 |                  0.0213 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
+# | CIFAR10 |       0.8279 |                  0.1500 |         0.99 |                    1.00 |                        0.01 |                                   1.00 |
+# | SVHN    |       0.9378 |                  0.2453 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
 
 *** Jacobian-based Saliency Map Approach (JSMA)
 
@@ -402,17 +423,37 @@ trained on mixed clean data and adversarial dataset which is generated
 via FGSM with \(\epsilon=0.03\).  Then we re-generate adversarial
 dataset via FGSM/TGSM with different \(\epsilon\) values.
 
-#+CAPTION: \(\epsilon\) sensitivity on CIFAR10
-#+NAME: tbl:eps-sensitivity-cifar10
-#+ATTR_LaTeX: :booktabs true :align r|rr
-|              | \(\eval{f_2}_{\epsilon=0.03}\) |                         |
-|--------------+--------------------------------+-------------------------|
-| \(\epsilon\) |                   \(X_{test}\) | \(X^{adv(f_1)}_{test}\) |
-|--------------+--------------------------------+-------------------------|
-|          0.3 |                         0.9996 |                  1.0000 |
-|          0.1 |                         0.9996 |                  1.0000 |
-|         0.03 |                         0.9996 |                  0.9997 |
-|         0.01 |                         0.9996 |                *0.0030* |
+#+BEGIN_EXPORT latex
+\begin{table}[htbp]
+  \caption{\label{tbl:eps-sensitivity-cifar10}
+    \(\epsilon\) sensitivity on CIFAR10}
+  \centering
+  \begin{tabular}{lcll}
+    \toprule
+    & \phantom{a} & \multicolumn{2}{c}{\(\eval{f_2}_{\epsilon=0.03}\)} \\
+    \cmidrule{3-4}
+    \(\epsilon\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\)\\
+    \midrule
+    0.3 && 0.9996 & 1.0000\\
+    0.1 && 0.9996 & 1.0000\\
+    0.03 && 0.9996 & 0.9997\\
+    0.01 && 0.9996 & \textbf{0.0030}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+#+END_EXPORT
+
+# #+CAPTION: \(\epsilon\) sensitivity on CIFAR10
+# #+NAME: tbl:eps-sensitivity-cifar10
+# #+ATTR_LaTeX: :booktabs true :align r|rr
+# |              | \(\eval{f_2}_{\epsilon=0.03}\) |                         |
+# |--------------+--------------------------------+-------------------------|
+# | \(\epsilon\) |                   \(X_{test}\) | \(X^{adv(f_1)}_{test}\) |
+# |--------------+--------------------------------+-------------------------|
+# |          0.3 |                         0.9996 |                  1.0000 |
+# |          0.1 |                         0.9996 |                  1.0000 |
+# |         0.03 |                         0.9996 |                  0.9997 |
+# |         0.01 |                         0.9996 |                *0.0030* |
 
 As shown in Table ref:tbl:eps-sensitivity-cifar10,
 \(\eval{f_2}_{\epsilon=\epsilon_0}\) can correctly filter out
@@ -434,7 +475,7 @@ classifier approach.
 *** Disparity among Adversarial Samples
 
 #+ATTR_LaTeX: :float multicolumn
-#+CAPTION: Adversarial training \cite{huang2015-learning,kurakin2016-adversarial-1} does not work.  This is a church window plot \cite{warde-farley2016-adversarial}.  Each pixel \((i, j)\) (row index and column index pair) represents a data point \(\tilde{x}\) in the input space and \(\tilde{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the direction computed by FGSM and \(\vb{v}\) is a random direction orthogonal to \(\vb{h}\).  The \(\epsilon\) ranges from \([-2, 2]\) and \(\epsilon_{(\cdot)}\) is the interpolated value in between.  The central black dot \tikz[baseline=-0.5ex]{\draw[fill=black] (0,0) circle (0.3ex)} represents the original data point \(x\), the orange dot \tikz[baseline=-0.5ex]{\draw[fill=orange,draw=none] (0,0) circle (0.3ex)} represents the adversarial sample created from \(x\) via FGSM that is used in the adversarial training and the blue dot \tikz[baseline=-0.5ex]{\draw[fill=blue,draw=none] (0,0) circle (0.3ex)} represents the adversarial sample created from \(x\) via JSMA and projected onto \((\vb{h}, \vb{v})\). The three digits below each image are the data samples that correspond to the black dot, orange dot and blue dot, respectively.  \tikz[baseline=0.5ex]{\draw (0,0) rectangle (2.5ex,2.5ex)} ( \tikz[baseline=0.5ex]{\draw[fill=black,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} ) represents the data samples that are always correctly (incorrectly) recognized by the model before and after the adversarial training.  \tikz[baseline=0.5ex]{\draw[fill=red,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the adversarial samples that can be correctly recognized after training but not before, i.e., the purpose of adversarial training.  And \tikz[baseline=0.5ex]{\draw[fill=green,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the data points that were correctly recognized before training but incorrectly recognized after retraining, i.e., the side effect of adversarial training.
+#+CAPTION: Adversarial training \cite{huang2015-learning,kurakin2016-adversarial-1} does not work.  This is a church window plot \cite{warde-farley2016-adversarial}.  Each pixel \((i, j)\) (row index and column index pair) represents a data point \(\tilde{x}\) in the input space and \(\tilde{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the direction computed by FGSM and \(\vb{v}\) is a random direction orthogonal to \(\vb{h}\).  The \(\epsilon\) ranges from \([-0.5, 0.5]\) and \(\epsilon_{(\cdot)}\) is the interpolated value in between.  The central black dot \tikz[baseline=-0.5ex]{\draw[fill=black] (0,0) circle (0.3ex)} represents the original data point \(x\), the orange dot (on the right of the center dot) \tikz[baseline=-0.5ex]{\draw[fill=orange,draw=none] (0,0) circle (0.3ex)} represents the last adversarial sample created from \(x\) via FGSM that is used in the adversarial training and the blue dot \tikz[baseline=-0.5ex]{\draw[fill=blue,draw=none] (0,0) circle (0.3ex)} represents a random adversarial sample created from \(x\) that cannot be recognized with adversarial training. The three digits below each image, from left to right, are the data samples that correspond to the black dot, orange dot and blue dot, respectively.  \tikz[baseline=0.5ex]{\draw (0,0) rectangle (2.5ex,2.5ex)} ( \tikz[baseline=0.5ex]{\draw[fill=black,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} ) represents the data samples that are always correctly (incorrectly) recognized by the model.  \tikz[baseline=0.5ex]{\draw[fill=red,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the adversarial samples that can be correctly recognized without adversarial training only.  And \tikz[baseline=0.5ex]{\draw[fill=green,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the data points that were correctly recognized with adversarial training only, i.e., the side effect of adversarial training.
 #+NAME: fig:adv-training-not-working
 [[file:img/adv-training-not-working.pdf]]
 
@@ -476,33 +517,28 @@ is represented as a black dot in the center of each image, the
 adversarial sample used in adversarial training is represented as an
 orange dot (on the right of black dot, i.e., in the direction computed
 by FGSM).  The green area represents the adversarial samples that
-cannot be correctly recognized before adversarial training but can be
-correctly recognized after training.  In other words, these data
-samples are not adversarial anymore after training.  The red area
-represents data samples that can be correctly recognized before
-adversarial training but cannot be correctly recognized after
-training.  In other words, it represents the side effect of
-adversarial training, i.e., slightly reducing the model accuracy.  The
-white (gray) area represents the data samples that are always
-correctly (incorrectly) recognized before and after adversarial
+cannot be correctly recognized without adversarial training but can be
+correctly recognized with adversarial training.  The red area
+represents data samples that can be correctly recognized without
+adversarial training but cannot be correctly recognized with
+adversarial training.  In other words, it represents the side effect
+of adversarial training, i.e., slightly reducing the model accuracy.
+The white (gray) area represents the data samples that are always
+correctly (incorrectly) recognized with or without adversarial
 training.
 
 As we can see from Figure ref:fig:adv-training-not-working,
 adversarial training does make the model more robust against the
 adversarial sample (and adversarial samples around it to some extent)
 used for training (green area).  However, it does not rule out all
-adversarials.  The majority of adversarial samples (gray area) are not
-affected by the adversarial training.  Further more, we could observe
-that the green area largely distributes along the horizontal
+adversarials.  There are still adversarial samples (gray area) that
+are not affected by the adversarial training.  Further more, we could
+observe that the green area largely distributes along the horizontal
 direction, i.e., the FGSM direction.  In cite:nguyen2014-deep, they
 observed similar results for fooling images.  In their experiment,
-after training with fooling images, deep neural network models are
-more robust against a limited set of fooling images.  However they can
-still be fooled by other fooling images easily.
-
-Beside, Figure ref:fig:adv-training-not-working also suggests that the
-direction computed by FGSM and JSMA are almost orthogonal.  Their
-cosine distance is very close to 1.
+adversarial training with fooling images, deep neural network models
+are more robust against a limited set of fooling images.  However they
+can still be fooled by other fooling images easily.
 
 * Conclusion
 :PROPERTIES:
