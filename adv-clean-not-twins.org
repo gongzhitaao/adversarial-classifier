@@ -277,6 +277,9 @@ ref:eq:llcm-y.
 And it was extended to more general case where \(y^{adv}\) could be
 any desired target class cite:kurakin2016-adversarial-1.
 
+# The following table belongs to the "Efficiency and Robustness of the
+# Classifier" section, place here only for typesetting.
+
 #+BEGIN_EXPORT latex
 \begin{table*}[htbp]
   \caption{\label{tbl:accuracy-summary}
@@ -296,9 +299,6 @@ any desired target class cite:kurakin2016-adversarial-1.
 \end{table*}
 
 #+END_EXPORT
-
-# The following table belongs to the "Efficiency and Robustness of the
-# Classifier" section, place here only for typesetting.
 
 # #+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
 # #+NAME: tbl:accuracy-summary
@@ -368,6 +368,9 @@ limitation of of the binary classifier approach.
    will be seriously flawed if \(f_2\) failed this second-round
    attacking test.
 
+The code to reproduce our experiment are available
+https://github.com/gongzhitaao/adversarial-classifier.
+
 ** Efficiency and Robustness of the Classifier
 
 We evaluate the binary classifier approach on MNIST, CIFAR10 and SVHN
@@ -410,8 +413,8 @@ performance, however, we discover that it suffers from the
    algorithm.
 
 In out experiment, the aforementioned limitations also apply to
-defensive retraining cite:kurakin2016-adversarial-1 and distillation
-cite:papernot2015-distillation.
+adversarial training cite:kurakin2016-adversarial-1,huang2015-learning
+and defensive distillation cite:papernot2015-distillation.
 
 *** Sensitivity to \(\epsilon\)
 
@@ -513,7 +516,7 @@ ref:fig:adv-training-not-working.  Figure
 ref:fig:adv-training-not-working visually shows the effect of
 adversarial training cite:kurakin2016-adversarial-1.  Each image
 represents adversarial samples generated from /one/ data sample, which
-is represented as a black dot in the center of each image, the
+is represented as a black dot in the center of each image, the last
 adversarial sample used in adversarial training is represented as an
 orange dot (on the right of black dot, i.e., in the direction computed
 by FGSM).  The green area represents the adversarial samples that
