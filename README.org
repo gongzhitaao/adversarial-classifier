@@ -1,0 +1,22 @@
+#+TITLE: Adversarial Classifier
+
+This repo contains the code to reproduce the experiment in our paper,
+specifically the code to generate the figures and tables.
+
+* Dependencies
+:PROPERTIES:
+:CUSTOM_ID: sec:dependencies
+:END:
+
+1. Python 3.6+
+2. Keras https://keras.io/
+3. Tensorflow https://tensorflow.org
+4. tensorflow-adversarial
+   https://github.com/gongzhitaao/tensorflow-adversarial
+
+* Datasets
+:PROPERTIES:
+:CUSTOM_ID: sec:datasets
+:END:
+
+We used MNIST, CIFAR10 and SVHN in our experiment.
