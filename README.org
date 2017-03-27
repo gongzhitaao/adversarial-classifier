@@ -3,9 +3,9 @@
 This repo contains the code to reproduce the experiment in our paper,
 specifically the code to generate the figures and tables.
 
-* Dependencies
+* Code Dependencies
 :PROPERTIES:
-:CUSTOM_ID: sec:dependencies
+:CUSTOM_ID: sec:code-dependencies
 :END:
 
 1. Python 3.6+
@@ -20,3 +20,12 @@ specifically the code to generate the figures and tables.
 :END:
 
 We used MNIST, CIFAR10 and SVHN in our experiment.
+
+* Document
+:PROPERTIES:
+:CUSTOM_ID: sec:document
+:END:
+
+The paper itself is written in Org mode (http://orgmode.org/)
+employing the ICML2017 LaTeX template, with slight modification, i.e.,
+removing the conference information.
