@@ -42,9 +42,9 @@ data, the adversarial images can fool deep neural networks into wrong
 predictions with very high confidence.  In this paper, however, we
 show that we can build a simple binary classifier separating the
 adversarial apart from the clean data with accuracy over 99%.  We also
-show empirically that the binary classifier is robust to a
+empirically show that the binary classifier is robust to a
 second-round adversarial attack.  In other words, it is difficult to
-disguise adversarial samples to bypass our binary classifier.  Further
+disguise adversarial samples to bypass the binary classifier.  Further
 more, we empirically investigate the generalization limitation which
 lingers on all current defensive methods, including the binary
 classifier approach.  And we hypothesize that this is the result of
@@ -64,7 +64,7 @@ traffic sign classification cite:ciresan2012-multi, etc.  A recent
 study cite:szegedy2013-intriguing, however, discovered that deep
 neural networks are susceptible to adversarial images.  Figure
 ref:fig:adv-example shows an example of adversarial images generated
-with fast gradient sign method
+via fast gradient sign method
 cite:kurakin2016-adversarial,kurakin2016-adversarial-1 on MNIST.  As
 we can see that although the adversarial and original clean images are
 almost identical from the perspective of human beings, the deep neural
@@ -75,29 +75,29 @@ leveraged by malicious users, these adversarial images pose a great
 threat to the deep neural network systems.
 
 #+ATTR_LaTeX: :float multicolumn
-#+CAPTION: The adversarial images (second row) are generated from the first row with iterative FGSM.  The labels are shown below each image with prediction probabilities in parethesis.  Our model achieves less then 1% error rate on the clean data.
+#+CAPTION: The adversarial images (second row) are generated from the first row via iterative FGSM.  The label of each image is shown below with prediction probability in parenthesis.  Our model achieves less then 1% error rate on the clean data.
 #+NAME: fig:adv-example
 [[file:img/ex_adv_mnist.pdf]]
 
 Although adversarial and clean images appear visually indiscernible,
-their subtle difference can successfully fool the deep neural
+their subtle differences can successfully fool the deep neural
 networks.  This means that deep neural networks are sensitive to these
-subtle difference.  So an intuitively question to ask it: can we
-leverage these subtle difference to distinguish between adversarial
+subtle differences.  So an intuitively question to ask is: can we
+leverage these subtle differences to distinguish between adversarial
 and clean images?  Our experiment suggests the answer is positive.  In
 this paper we demonstrate that a simple binary classifier can separate
 the adversarial from the original clean images with very high accuracy
-(over 99%).  However, we that the binary classifier approach suffers
-from the generalization limitation, i.e., it is sensitive to 1) a
-parameter used in crafting adversarial dataset, and 2) to different
-adversarial crafting algorithms.  In addition to that, we also find
-that this limitation is also shared among other proposed methods
-against adversarial attacking, e.g., defensive retraining
-cite:huang2015-learning,kurakin2016-adversarial-1, knowledge
-distillation cite:papernot2015-distillation, etc.  We empirically
-examined the limitation and propose the hypothesis that the
-adversarial and original dataset are, in effect, two completely
-/different/ dataset, despite being visually similar.
+(over 99%).  However, we also show that the binary classifier approach
+suffers from the generalization limitation, i.e., it is sensitive 1)
+to a hyper-parameter used in crafting adversarial dataset, and 2) to
+different adversarial crafting algorithms.  In addition to that, we
+also discovered that this limitation is also shared among other
+proposed methods against adversarial attacking, e.g., defensive
+retraining cite:huang2015-learning,kurakin2016-adversarial-1,
+knowledge distillation cite:papernot2015-distillation, etc.  We
+empirically investigate the limitation and propose the hypothesis that
+the adversarial and original dataset are, in effect, two completely
+/different/ datasets, despite being visually similar.
 
 This article is organized as follows.  In Section
 ref:sec:related-work, we give an overview of the current research in
@@ -141,9 +141,9 @@ category.
 The adversarial images have been shown to be transferable among deep
 neural networks cite:szegedy2013-intriguing,kurakin2016-adversarial.
 This poses a great threat to current learning systems in that the
-attacker need not the knowledge of the target system.  Instead, the
-attack can train a different model to create adversarial samples which
-are still effective for the target deep neural networks.  What's
+attacker needs not the knowledge of the target system.  Instead, the
+attacker can train a different model to create adversarial samples
+which are still effective for the target deep neural networks.  What's
 worse, cite:papernot2016-transferability has shown that adversarial
 samples are even transferable among different machine learning
 techniques, e.g., deep neural networks, support vector machine,
@@ -157,13 +157,13 @@ our experiment, the image transformation defense does not perform well
 on images with low resolution, e.g., MNIST.  Knowledge distillation is
 also shown to be an effective method against most adversarial images
 cite:papernot2015-distillation.  The restrictions of defensive
-knowledge distillation is 1) that it only applies to models that
+knowledge distillation are 1) that it only applies to models that
 produce categorical probabilities, and 2) that it needs model
 retraining.  Adversarial training
-cite:kurakin2016-adversarial-1,huang2015-learning was also shown
+cite:kurakin2016-adversarial-1,huang2015-learning was also shown to
 greatly enhance the model robustness to adversarials.  However, as
 discussed in Section ref:subsec:generalization-limitation, defensive
-distillation and retraining suffers from, what we call, the
+distillation and adversarial training suffers from, what we call, the
 generalization limitations.  Our experiment suggests this seems to be
 an intrinsic property of adversarial datasets.
 
@@ -172,7 +172,7 @@ an intrinsic property of adversarial datasets.
 :CUSTOM_ID: sec:crafting-adversarials
 :END:
 
-The are mainly two categories of algorithms to generated adversarial
+The are mainly two categories of algorithms to generate adversarial
 samples, model independent and model dependent.  We briefly summarize
 these two classes of methods in this section.
 
@@ -360,30 +360,29 @@ limitation of of the binary classifier approach.
    X^{adv(f_1)}_{test}\}^{adv(f_2)}\) and test \(f_2\) accuracy on
    this new adversarial dataset.  Concretely, we want to test whether
    we could find adversarial samples 1) that can successfully bypass
-   the binary classifier \(f_2\), and 2) that still pose a threat to
-   the target model \(f_1\) if they bypass the binary classifier.
-   Since adversarial datasets are shown to be transferable among
-   different machine learning techniques
-   cite:papernot2016-transferability, the binary classifier approach
-   will be seriously flawed if \(f_2\) failed this second-round
-   attacking test.
+   the binary classifier \(f_2\), and 2) that can still fool the
+   target model \(f_1\) if they bypass the binary classifier.  Since
+   adversarial datasets are shown to be transferable among different
+   machine learning techniques cite:papernot2016-transferability, the
+   binary classifier approach will be seriously flawed if \(f_2\)
+   failed this second-round attacking test.
 
 The code to reproduce our experiment are available
 https://github.com/gongzhitaao/adversarial-classifier.
 
 ** Efficiency and Robustness of the Classifier
 
-We evaluate the binary classifier approach on MNIST, CIFAR10 and SVHN
+We evaluate the binary classifier approach on MNIST, CIFAR10, and SVHN
 datasets.  Of all the datasets, the binary classifier achieved
 accuracy over 99% and was shown to be robust to a second-round
 adversarial attack.  The results are summarized in Table
 ref:tbl:accuracy-summary.  Each column denotes the model accuracy on
-corresponding dataset.  The direct conclusions from Table
+the corresponding dataset.  The direct conclusions from Table
 ref:tbl:accuracy-summary are summarized as follows.
 1. Accuracy on \(X_{test}\) and \(X^{adv(f_1)}_{test}\) suggests that
    the binary classifier is very effective at separating adversarial
    from clean dataset.  Actually during our experiment, the accuracy
-   on \(X_{test}\) is always near 1, while accuracy on
+   on \(X_{test}\) is always near 1, while the accuracy on
    \(X^{adv(f_1)}_{test}\) is either near 1 (successful) or near 0
    (unsuccessful).  Which means that the classifier either
    successfully detects the subtle difference completely or fails
@@ -465,13 +464,13 @@ fails when adversarial data are generated with
 \(\epsilon<\epsilon_1\).  Results on MNIST and SVHN are similar.  This
 phenomenon was also observed in defensive retraining
 cite:kurakin2016-adversarial-1.  To overcome this issue, they proposed
-to use mixed \(\epsilon\) values to generated the adversarial
-datasets.  However, Table ref:tbl:eps-sensitivity-cifar10 suggests
-that adversarial dataset generated with smaller \(\epsilon\) are
+to use mixed \(\epsilon\) values to generate the adversarial datasets.
+However, Table ref:tbl:eps-sensitivity-cifar10 suggests that
+adversarial datasets generated with smaller \(\epsilon\) are
 /superset/ of those generated with larger \(\epsilon\).  This
-hypothesis could be well explained by by the linearity hypothesis
+hypothesis could be well explained by the linearity hypothesis
 cite:kurakin2016-adversarial,warde-farley2016-adversarial.  The same
-conclusion also applies to defensive retraining.  In our experiment,
+conclusion also applies to adversarial training.  In our experiment,
 the results of defensive retraining are similar to the binary
 classifier approach.
 
@@ -483,8 +482,8 @@ classifier approach.
 [[file:img/adv-training-not-working.pdf]]
 
 In our experiment, we also discovered that the binary classifier is
-also sensitive to the algorithms used to generated the adversarial
-dataset.
+also sensitive to the algorithms used to generate the adversarial
+datasets.
 
 Specifically, the binary classifier trained on FGSM adversarial
 dataset achieves good accuracy (over 99%) on FGSM adversarial dataset,
