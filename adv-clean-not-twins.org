@@ -37,7 +37,7 @@
 #+BEGIN_abstract
 
 Adversarial attack has cast a shadow on the massive success of deep
-neural networks.  Despite being visually almost identical to the clean
+neural networks.  Despite being almost visually identical to the clean
 data, the adversarial images can fool deep neural networks into wrong
 predictions with very high confidence.  In this paper, however, we
 show that we can build a simple binary classifier separating the
@@ -177,18 +177,18 @@ samples, model independent and model dependent.  We briefly summarize
 these two classes of methods in this section.
 
 By conventions, we use \(X\) to represent input image set (usually a
-3-dimension tensor), \(Y\) to represent the label set, usually one-hot
-encoded.  Lowercase represents an individual data sample, e.g., \(x\)
-for one input image.  Subscript to data samples denotes one of its
-elements, e.g., \(x_i\) denotes one pixel in the image, \(y_i\)
-denotes probability for the \(i\)-th target class.  \(f\) denotes the
-model, \(\theta\) the model parameter, \(J\) the loss function.  We
-use the superscript /adv/ to denote adversarial related variables,
-e.g., \(x^{adv}\) for one adversarial image.  \(\delta x\) denotes the
-adversarial noise for one image, i.e., \(x^{adv} = x + \delta x\).
-For clarity, we also include the model used to craft the adversarial
-samples where necessary, e.g., \(x^{adv(f_1)}\) denotes the
-adversarial samples created with model \(f_1\).  \(\mathbb{D}\)
+3-dimension tensor), and \(Y\) to represent the label set, usually
+one-hot encoded.  Lowercase represents an individual data sample,
+e.g., \(x\) for one input image.  Subscript to data samples denotes
+one of its elements, e.g., \(x_i\) denotes one pixel in the image,
+\(y_i\) denotes probability for the \(i\)-th target class.  \(f\)
+denotes the model, \(\theta\) the model parameter, \(J\) the loss
+function.  We use the superscript /adv/ to denote adversarial related
+variables, e.g., \(x^{adv}\) for one adversarial image.  \(\delta x\)
+denotes the adversarial noise for one image, i.e., \(x^{adv} = x +
+\delta x\).  For clarity, we also include the model used to craft the
+adversarial samples where necessary, e.g., \(x^{adv(f_1)}\) denotes
+the adversarial samples created with model \(f_1\).  \(\mathbb{D}\)
 denotes the image value domain, usually \([0, 1]\) or \([0, 255]\).
 And \(\epsilon\) is a scalar controlling the scale of the adversarial
 noise, another hyper-parameter to choose.
@@ -264,7 +264,7 @@ This method tries to modify the input towards the direction where
 \end{equation}
 #+END_EXPORT
 
-Originally this method was proposed as least-likely class method
+Originally this method was proposed as the least-likely class method
 cite:kurakin2016-adversarial where \(y^{adv}\) was chosen as the
 least-likely class predicted by the model as shown in Equation
 ref:eq:llcm-y.
@@ -274,7 +274,7 @@ ref:eq:llcm-y.
 \end{equation}
 #+END_EXPORT
 
-And it was extended to more general case where \(y^{adv}\) could be
+And it was extended to a more general case where \(y^{adv}\) could be
 any desired target class cite:kurakin2016-adversarial-1.
 
 # The following table belongs to the "Efficiency and Robustness of the
@@ -343,7 +343,7 @@ x)\) increases the most.
 :END:
 
 Generally, we follow the steps below to test the effectiveness and
-limitation of of the binary classifier approach.
+limitation of the binary classifier approach.
 
 1. Train a deep neural network \(f_1\) on the original clean training
    data \(X_{train}\), and craft adversarial dataset from the original

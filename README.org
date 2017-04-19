@@ -1,7 +1,8 @@
 #+TITLE: Adversarial Classifier
 
-This repo contains the code to reproduce the experiment in our paper,
-specifically the code to generate the figures and tables.
+This repo contains the code to reproduce the experiment in our paper
+(https://arxiv.org/abs/1704.04960), specifically the code to generate
+the figures and tables.
 
 * Code Dependencies
 :PROPERTIES:
